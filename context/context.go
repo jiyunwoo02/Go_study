@@ -6,9 +6,13 @@ import (
 	"time"
 )
 
+// 2. 작업 시간을 설정한 컨텍스트 (rev8.go)
+
 func main() {
-	// 2초 후에 자동으로 취소되는 컨텍스트 생성
+	// 생성된 시점으로부터 2초 후에 자동으로 취소되는 컨텍스트 생성
+	//-> 즉, 2초가 지나면 ctx.Done() 채널이 닫히고, 이로 인해 타임아웃이 발생했음을 알릴 수 있다.
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+
 	defer cancel() // 메인 함수가 종료될 때 컨텍스트 취소
 
 	// 고루틴에서 작업 수행
@@ -16,10 +20,12 @@ func main() {
 
 	// 메인 함수는 3초 동안 대기
 	time.Sleep(3 * time.Second) // 고루틴의 작업이 완료되거나, 컨텍스트가 취소될 때까지 대기
+	// -> 이 대기 시간은 컨텍스트의 타임아웃보다 길게 설정되어, 컨텍스트가 먼저 타임아웃되도록 유도
 }
+
 func dowork(ctx context.Context) {
 	select {
-	case <-time.After(5 * time.Second):
+	case <-time.After(4 * time.Second): // 컨텍스트 시간보다 적게(예 : 1) 설정하면 이거 출력되는 거 확인
 		// 5초 후에 작업 완료되면 메시지 출력
 		fmt.Println("작업 완료")
 

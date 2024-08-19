@@ -26,11 +26,11 @@ func main() {
 
 	// 1. 틱 채널 생성
 	tickInterval := 2 * time.Second     // 틱 간격을 2초로 설정
-	tickChan := time.Tick(tickInterval) // 2초마다 틱을 발생시키는 채널 생성 -> 주기적으로 값을 전달하여, 주기적인 작업을 쉽게 처리
+	tickChan := time.Tick(tickInterval) // 2초마다 틱을 발생시키는 '채널' 생성 -> 지정한 간격마다 주기적으로 값(현재 시각)을 전달
 
 	// 2. 5초 후에 닫힐 채널 생성
 	timeout := 5 * time.Second         // 타임아웃 시간 설정
-	timeoutChan := time.After(timeout) // 5초 후에 단일 값을 보내는 채널 생성 -> 설정된 시간이 지나면 한 번만 값을 전송
+	timeoutChan := time.After(timeout) // 5초 후에 단일 값을 보내는 '채널' 생성 -> 지정한 시간이 지나면 한 번만 값을 전송(현재 시각)
 
 	// for 무한 루프 내에서 select 문을 사용하여 여러 채널 작업을 처리
 	for { // select 문은 for 루프가 실행되는 동안 반복적으로 평가 -> select 문이 하나의 case를 처리하면, for 루프는 다시 반복을 시작하여 select 문을 다시 평가
@@ -53,6 +53,8 @@ func main() {
 		}
 	}
 }
+
+// 3초로 틱 해두면 3초 한 번 출력되고 종료된다
 
 /*
 for 루프는 무한 루프이므로, select 문은 반복적으로 실행된다

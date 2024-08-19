@@ -49,12 +49,12 @@ func main() { // 메인 고루틴 실행
 
 	// Unbuffered Channel
 	unbufferedChan := make(chan string) // 버퍼 크기가 0인 채널, 채널에 데이터 보내려면 수신자가 즉시 있어야 한다
-	// 데이터를 보내는 고루틴은 데이터가 채널에 수신될 때까지 블록된다
+	// -> 데이터를 보내는 고루틴은 데이터가 채널에 수신될 때까지 블록된다
 
 	// Buffered Channel with a buffer size of 2
 	bufferedChan := make(chan string, 2) // 버퍼 크기가 2인 채널, 최대 2개의 데이터를 수신자가 받지 않아도 저장 가능
 	// 2개 데이터 저장된 이후에 송신자는 더 이상 데이터 보낼 수 없으며, 수신자가 데이터를 받을 때까지 블록된다.
-	// 두 개의 값을 저장할 수 있으며, 송신자는 버퍼가 가득 차기 전까지 블록되지 않는다.
+	// -> 두 개의 값을 저장할 수 있으며, 송신자는 버퍼가 가득 차기 전까지 블록되지 않는다.
 
 	// Function to demonstrate Unbuffered Channel
 	go func() {
@@ -67,12 +67,12 @@ func main() { // 메인 고루틴 실행
 	go func() {
 		fmt.Println("Goroutine 2: buffered 채널에 데이터 보내기")
 		bufferedChan <- "buffered 채널 메시지1"
-		bufferedChan <- "buffered 채널 메시지2" // 두 개의 메시지가 연속으로 전송되어 모두 버퍼에 저장되고, 고루틴2는 블록되지 않는다
+		bufferedChan <- "buffered 채널 메시지2" // 두 개의 메시지가 연속으로 전송되어 모두 버퍼에 저장되고, 고루틴2는 블록되지 않는다 (수신자가 없어도 송신 가능)
 		fmt.Println("Goroutine 2: buffered 채널에 데이터 보내짐")
 	}()
 
 	// Give some time for goroutines to execute
-	time.Sleep(3 * time.Second) // 고루틴들이 채널에 데이터 전송할 시간 주기 위해 메인 고루틴을 3초 동안 지연시킨다
+	time.Sleep(3 * time.Second) // (고루틴들이 채널에 데이터 전송할 시간 주기 위해) 메인 고루틴을 3초 동안 지연시킨다
 	fmt.Println("\n-- 메인 고루틴 3초간 대기 완료!\n")
 	// time.Second는 1초, time.Sleep 함수는 인자로 받은 시간을 동안 현재 고루틴을 "수면 상태"로 만들어, 다른 작업을 할 수 없게 만든다.
 

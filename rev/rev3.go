@@ -37,10 +37,10 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("Range와 Channel에 대해 알아보자\n")
+	fmt.Println("Range와 Channel에 대해 알아보자")
 
 	// 1. 채널과 Range
-	fmt.Println("\n1. 채널 예제 : ")
+	fmt.Println("\n1. 채널 예제")
 
 	ch := make(chan int, 3) // int 타입의 버퍼가 3인 채널을 생성 -> 최대 3개의 int 값을 저장할 수 있는 버퍼
 
@@ -64,6 +64,7 @@ func main() {
 	// 메인 고루틴의 for 루프는 채널에 데이터가 들어오면 데이터를 수신하여 출력하며, 고루틴은 채널에 데이터를 보내고 채널을 닫는 작업을 진행
 
 	// 2. 슬라이스와 Range
+	// : 슬라이스의 첫 번째 요소부터 마지막 요소까지 순차적으로 접근
 	fmt.Println("\n2. 슬라이스 예제")
 
 	slice := []int{10, 20, 30, 40} // 정수형 슬라이스를 생성
@@ -75,12 +76,14 @@ func main() {
 	}
 
 	// 3. 맵과 Range
+	// : 맵의 모든 키-값 쌍을 확인할 때까지 순회
 	fmt.Println("\n3. 맵 예제")
 
 	m := map[string]int{"a": 100, "b": 200, "c": 300} // 문자열 키와 정수 값을 가지는 맵을 생성
 
 	// `range`를 사용하여 맵을 반복
 	// 각 키와 값을 출력
+	// : 다만, 슬라이스와는 달리, 맵은 순회할 때 요소가 무작위 순서로 반환될 수 있다.
 	for key, value := range m {
 		fmt.Printf("키 : %s, 값: %d\n", key, value)
 	}
