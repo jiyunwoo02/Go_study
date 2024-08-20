@@ -5,10 +5,12 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"sync"
 )
 
-var wg2 sync.WaitGroup // 하나의 고루틴을 대기하기 위해 사용
+// 고루틴의 실행을 기다리기 위해 사용하는 Go의 동기화 도구
+var wg2 sync.WaitGroup
 
 func main() {
 	fmt.Println("컨텍스트에 대해 알아보자")
@@ -23,13 +25,17 @@ func main() {
 }
 
 func Square(ctx context.Context) {
-	if v := ctx.Value("num"); v != nil { // 컨텍스트에서 "num"라는 키로 저장된 값을 가져온다 -> interface{} 타입 반환
+	if v := ctx.Value("num"); v != nil { // 컨텍스트에서 "num"라는 키로 저장된 값을 가져온다 -> interface{} 빈 인터페이스 타입 반환
 		// v가 nil(유효하지 않은 값)이면, "num" 키로 저장된 값이 없다는 뜻 -> 조건문 내부의 코드가 실행 X
 		n := v.(int) // v는 interface{} 타입, v를 int 타입으로 변환
 		fmt.Printf("Square : %d", n*n)
 	}
 	wg2.Done() // 작업이 완료되었음을 알리기 위해 -> WaitGroup의 카운터를 1 줄인다
 }
+
+/*컨텍스트에 대해 알아보자
+Square : 81
+*/
 
 /* if 조건문 사이에 ; 은 왜 쓰지?
 - Go 언어에서 if 조건문 사이에 세미콜론(;)을 사용하는 이유는: if 문에서 변수를 선언하거나 초기화할 수 있도록 하기 위해서
@@ -48,6 +54,6 @@ func Square(ctx context.Context) {
 
 /* 키-값으로 저장하는데 맵 구조인가?
 Go의 context.WithValue 함수는 특정한 키-값 쌍을 컨텍스트에 저장할 수 있도록 해준다
-하지만 이 키-값 쌍은 맵(map)과 같은 자료 구조로 저장되는 것은 아니다!
-대신, 컨텍스트는 키-값을 계층적으로 저장하는 방식으로 설계되어 있다.
+- 하지만 이 키-값 쌍은 맵(map)과 같은 자료 구조로 저장되는 것은 아니다!
+- 대신, 컨텍스트는 키-값을 계층적으로 저장하는 방식으로 설계되어 있다.
 */

@@ -1,5 +1,6 @@
-/* 2. 채널 unbuffered, buffered 동작 차이
-Go에서 채널(Channel)은 고루틴(goroutine) 간의 통신을 위해 사용되는 데이터 파이프라인으로, 데이터를 안전하게 주고받을 수 있게 해준다.
+/* < 2. 채널 unbuffered, buffered 동작 차이 >
+
+Go에서 채널(Channel)은 고루틴(goroutine) 간의 통신을 위해 사용되며, 데이터를 안전하게 주고받을 수 있게 해준다.
 
 채널에는 두 가지 주요 유형이 있다:
 - 버퍼링된 채널(Buffered Channel)
@@ -15,10 +16,10 @@ Go에서 채널(Channel)은 고루틴(goroutine) 간의 통신을 위해 사용�
 	- 버퍼링된 채널의 경우, 송신자는 채널이 가득 찰 때까지 데이터를 보내고 바로 반환된다.
 	- 수신자는 채널이 비어 있을 때까지 데이터를 받을 수 있다.
 
-=> Go에서 어떤 채널을 사용할지는 상황에 따라 다르며, 동기화가 필요한 경우에는 unbuffered channel을, 비동기적으로 데이터를 주고받고자 할 때는 buffered channel을 사용
+=> 동기화가 필요한 경우에는 unbuffered channel을, 비동기적으로 데이터를 주고받고자 할 때는 buffered channel을 사용
 
 일반적으로 채널을 생성하면 크기가 0인 채널이 만들어진다 (unbuffered)
-크기가 0이라는 뜻은 채널에 들어온 데이터를 담아둘 곳이 없다는 얘기가 된다
+- 크기가 0이라는 뜻은 채널에 들어온 데이터를 담아둘 곳이 없다는 얘기가 된다
 
 ex) 예를 들어 택배 기사가 택배를 전달하는데
 - 택배를 담아둘 곳이 없으면 수신자가 와서 가져갈 때까지 송신자가 택배를 들고 기다려야 한다
@@ -29,7 +30,7 @@ ex) 예를 들어 택배 기사가 택배를 전달하는데
 - 어느 수신자도 데이터를 빼가지 않으면, 송신자는 영원히 대기하게 되어 deadlock 메시지를 출력하고 프로그램이 강제 종료된다
 
 *버퍼: 내부에 데이터를 보관할 수 있는 메모리 영역
-보관함을 가지고 있는 채널 = 버퍼를 가진 채널 -> make() 함수에서 뒤에 버퍼 크기를 적어준다 (buffered)
+보관함을 가지고 있는 채널 = 버퍼를 가진 채널 -> make() 함수에서 버퍼 크기를 적어준다 (buffered)
 
 버퍼가 다 차면, 버퍼가 없을 때와 마찬가지로 보관함에 빈 자리가 생길 때까지 대기한다
 그래서 데이터를 제때 빼가지 않으면, 버퍼가 없을 때처럼 대기
@@ -43,7 +44,7 @@ import (
 	"time"
 )
 
-func main() { // 메인 고루틴 실행
+func main() { // 메인 고루틴[수신자] 실행: 각 고루틴은 채널을 통해 메인 고루틴으로 데이터를 보낸다
 
 	fmt.Println("Channel에 대해 알아보자\n")
 
@@ -56,14 +57,14 @@ func main() { // 메인 고루틴 실행
 	// 2개 데이터 저장된 이후에 송신자는 더 이상 데이터 보낼 수 없으며, 수신자가 데이터를 받을 때까지 블록된다.
 	// -> 두 개의 값을 저장할 수 있으며, 송신자는 버퍼가 가득 차기 전까지 블록되지 않는다.
 
-	// Function to demonstrate Unbuffered Channel
+	// Function to Unbuffered Channel[송신자]
 	go func() {
 		fmt.Println("Goroutine 1: unbuffered 채널에 데이터 보내기") // 데이터 보내기 시작
 		unbufferedChan <- "unbuffered 채널 메시지"              // 메인 고루틴이 이 채널에서 데이터 받을 준비가 될 때까지 고루틴1은 멈춘다
 		fmt.Println("Goroutine 1: unbuffered channel에 데이터 보내짐")
 	}()
 
-	// Function to demonstrate Buffered Channel
+	// Function to Buffered Channel[송신자]
 	go func() {
 		fmt.Println("Goroutine 2: buffered 채널에 데이터 보내기")
 		bufferedChan <- "buffered 채널 메시지1"
@@ -71,14 +72,12 @@ func main() { // 메인 고루틴 실행
 		fmt.Println("Goroutine 2: buffered 채널에 데이터 보내짐")
 	}()
 
-	// Give some time for goroutines to execute
-	time.Sleep(3 * time.Second) // (고루틴들이 채널에 데이터 전송할 시간 주기 위해) 메인 고루틴을 3초 동안 지연시킨다
+	time.Sleep(3 * time.Second) // 메인 고루틴을 3초 동안 지연
 	fmt.Println("\n-- 메인 고루틴 3초간 대기 완료!\n")
 	// time.Second는 1초, time.Sleep 함수는 인자로 받은 시간을 동안 현재 고루틴을 "수면 상태"로 만들어, 다른 작업을 할 수 없게 만든다.
 
 	// Receiving from Unbuffered Channel
-	// 1초 후 메인 고루틴이 깨어나 데이터 수신
-	// 메인 고루틴이 unbufferedChan으로부터 데이터를 수신하면, 이전에 블록된 고루틴이 데이터를 보내게 된다.
+	// 3초 후 메인 고루틴이 깨어나 데이터 수신
 	fmt.Println("Main: unbuffered 채널로부터 데이터 수신")
 	fmt.Println("Main: 수신 완료 - ", <-unbufferedChan) // 메인 고루틴이 실제로 데이터를 수신
 
@@ -88,10 +87,34 @@ func main() { // 메인 고루틴 실행
 	fmt.Println("Main: 수신 완료 - ", <-bufferedChan)
 	fmt.Println("Main: 수신 완료 - ", <-bufferedChan)
 
+	/*Channel에 대해 알아보자
+
+	Goroutine 1: unbuffered 채널에 데이터 보내기
+	Goroutine 2: buffered 채널에 데이터 보내기
+	Goroutine 2: buffered 채널에 데이터 보내짐
+
+	-- 메인 고루틴 3초간 대기 완료!
+
+	Main: unbuffered 채널로부터 데이터 수신
+	Main: 수신 완료 -  unbuffered 채널 메시지
+	Main: buffered 채널로부터 데이터 수신
+	Goroutine 1: unbuffered channel에 데이터 보내짐
+	Main: 수신 완료 -  buffered 채널 메시지1
+	Main: 수신 완료 -  buffered 채널 메시지2
+	*/
+
 	// 각 고루틴은 데이터를 채널을 통해 메인 고루틴으로 송신
 	// 메인 고루틴은 이 데이터를 수신하고 출력하는 역할
-	// 이 구조 덕에 고루틴 간에 안전하게 데이터 주고받을 수 있다
 }
+
+/*
+1. 메인 고루틴이 시작되고, Unbuffered Channel과 Buffered Channel을 각각 생성
+2. 고루틴 1이 unbufferedChan에 데이터를 보내려 하지만, 메인 고루틴이 수신할 준비가 되지 않았기 때문에 일시적으로 블록됨
+3. 고루틴 2는 bufferedChan에 두 개의 데이터를 전송하고, 버퍼가 가득 차지 않았으므로 블록되지 않음
+4. 메인 고루틴이 3초 동안 대기한 후 깨어나서, 각 채널에서 데이터를 수신
+5. unbufferedChan에서 데이터를 수신하면 고루틴 1이 블록 상태에서 해제
+6. bufferedChan에서 두 개의 데이터를 차례로 수신
+*/
 
 /*
 이 프로그램에는 총 3개의 고루틴이 있다: (매번 순서 랜덤)
