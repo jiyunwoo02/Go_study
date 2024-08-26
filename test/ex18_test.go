@@ -17,8 +17,10 @@ func TestSquare(t *testing.T) {
 }
 
 func TestSquare2(t *testing.T) {
-	rst := square(9)
-	if rst != 81 {
+	rst := square(3)
+	if rst != 9 {
 		t.Errorf("square(3) should be 9 but returns %d", rst)
 	}
+	// 두 테스트 다 테스트 성공하면 두 테스트 한 번에 실행해도 하나의 pass ok 뜬다
+	// 테스트 하나씩 실행하려면 go test -run Square1
 }
