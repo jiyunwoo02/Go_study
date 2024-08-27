@@ -28,7 +28,7 @@ import (
 func main() {
 	var wg sync.WaitGroup
 
-	// Add 값을 2로 설정합니다.
+	// Add 값을 2로 설정
 	wg.Add(2)
 
 	//var num int = 1
