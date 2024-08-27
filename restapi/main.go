@@ -26,6 +26,7 @@ var students map[int]Student // Id를 키로, Student 데이터를 저장
 var lastId int // 현재까지 추가된 마지막 학생의 ID를 추적
 
 // 핸들러는 HTTP 요청을 받아서 그에 대응하는 작업을 수행하고, 결과를 클라이언트에게 돌려주는 역할
+
 func MakeWebHandler() http.Handler { // 웹 서버의 핸들러를 생성하고 설정
 	mux := mux.NewRouter() // gorilla/mux 생성 [새로운 라우터 생성]
 	// client가 특정 URL로 요청을 보낼 때, 해당 URL에 맞는 핸들러 함수를 찾아 실행해주는 것이 라우터의 역할
@@ -79,7 +80,8 @@ func GetStudentListHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// 3000번 포트에서 입력 대기
-	http.ListenAndServe(":3000", MakeWebHandler()) // 3000번 포트에서 HTTP 서버 시작, MakeWebHandler에서 반환된 핸들러를 사용하여 요청 처리
+	http.ListenAndServe(":3000", MakeWebHandler()) // 3000번 포트에서 HTTP 서버 시작\
+	// MakeWebHandler에서 반환된 핸들러를 사용하여 요청 처리
 	// http://localhost:3000/students로 요청을 보내면, 서버는 두 개의 미리 정의된 학생 데이터를 JSON 형식으로 응답
 	// -> 이 데이터는 Id 기준으로 정렬된 상태로 반환
 }
