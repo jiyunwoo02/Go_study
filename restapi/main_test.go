@@ -105,8 +105,8 @@ func TestJsonHandler4(t *testing.T) {
 	res = httptest.NewRecorder()
 	req = httptest.NewRequest("GET", "/students", nil)
 	mux.ServeHTTP(res, req)
-
 	assert.Equal(http.StatusOK, res.Code)
+
 	var list []Student
 	err := json.NewDecoder(res.Body).Decode(&list)
 	assert.Nil(err)

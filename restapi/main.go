@@ -7,6 +7,7 @@ import (
 	"strconv"       // 문자열을 기본 데이터 타입으로 변환하는 기능 제공
 
 	"github.com/gorilla/mux" // 강력한 URL 라우팅 기능을 제공하는 외부 패키지, 요청 URL과 관련된 핸들러를 매핑하는 데 사용
+	// URL 라우팅: 클라이언트가 요청한 url 과 요청 방식(get/post/delete/put 등)에 따른 서버의 처리 방식을 지정하여 웹 어플리케이션의 이정표 역할을 수정
 	/* Go 공식 문서
 	1. Package gorilla/mux implements a request router and dispatcher
 	- for matching incoming requests to their respective handler.
@@ -27,7 +28,7 @@ var students map[int]Student
 // 맵에 객체를 추가할 때 키 값으로 사용하는 것은 구조체의 어떤 필드든 될 수 있지만,
 // 여기서는 고유 식별자의 역할을 하는 Id 필드가 자연스럽게 키로 사용된다!
 
-var lastId int // 가장 최근에 추가된 마지막 학생의 ID를 추적
+var lastId int // 가장 최근에 추가된 학생의 ID 추적
 
 // 핸들러는 HTTP 요청을 받아서 그에 대응하는 작업을 수행하고, 결과를 클라이언트에게 돌려주는 역할
 
@@ -35,8 +36,8 @@ func MakeWebHandler() http.Handler { // 웹 서버의 요청을 처리할 라우
 	mux := mux.NewRouter() // gorilla/mux 생성 [새로운 라우터 생성]
 	// client가 특정 URL로 요청을 보낼 때, 해당 URL에 맞는 핸들러 함수를 찾아 실행해주는 것이 라우터의 역할
 
-	// "/students" 경로로 "GET" 요청이 들어올 때 GetStudentListHandler 함수가 호출되도록 설정
 	// 1. 학생 목록 조회하는 핸들러 함수와 경로 등록
+	// "/students" 경로로 "GET" 요청이 들어올 때 GetStudentListHandler 함수가 호출되도록 설정
 	mux.HandleFunc("/students", GetStudentListHandler).Methods("GET")
 
 	//2. 특정 학생 정보 조회
@@ -51,7 +52,7 @@ func MakeWebHandler() http.Handler { // 웹 서버의 요청을 처리할 라우
 	// 초기 학생 데이터 설정
 	students = make(map[int]Student)
 
-	// 임시 학생 데이터 두 개 생성해서 저장
+	// 1) 임시 학생 데이터 두 개 생성해서 저장
 	// GET 요청 받으면 -> GetStudentListHandler() 함수 호출
 	// -> students 맵에 저장된 학생 데이터로 []Student 타입의 학생 목록 만든다
 	students[1] = Student{1, "aaa", 16, 87}
