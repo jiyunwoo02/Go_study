@@ -5,3 +5,22 @@ go env // 환경설정
 go mod init [module-name] // 현재 디렉토리를 Go 모듈로 초기화하고, 모듈의 이름을 module-name로 설정, go.mod 파일이 생성
 go version // go 버전
 go tool cgo // Go 프로그램에서 C 코드를 호출할 수 있게 해주는 Go의 도구
+
+[정리]
+bug: Go 언어 자체의 버그를 리포트할 수 있는 사이트를 브라우저로 접속한다. 버그 리포트를 시작한다.
+builld: 패키지 컴파일
+clean: 컴파일 시 생성되는 패키지 목적 파일(object fle) 삭제
+doc: 패키지 문서 출력한다. 특정 패키지 설명 볼 때 유용
+env: Go 환경 설정 출력
+fix: 오래된 API를 사용하는 Go 프로그램을 찾아서 새로운 API로 업데이트한다.
+fmt: 패키지를 리포맷하는 gofmt 툴을 실행한다. Go 코딩 규약에 맞춰서 소스코드 수정해준다.
+generate: 만약 패키지 파일 안에 파일 생성 절차가 정의되어 있으면 그에 따라서 go 파일 생성
+get: 현재 모듈 패키지 목록에 패키지 추가하고 다운받는다
+install: 컴파일한 뒤 결과를 GOPATH/bin 경로에 설치
+list: 패키지나 모듈 목록 출력
+mod: 새로운 모듈 만들거나 관리
+run: 컴파일한 뒤 결과 프로그램 실행한다. 실행 파일 생성 X
+test: 패키지 테스트
+tool: 특정 go 도구 실행한다. go tool [command] 형태로 사용되고, [command]에 도구명 작성. cgo, pprof, pack 등
+version: go 버전 출력
+vet: 패키지 내 버그로 의심되는 부분 보고
