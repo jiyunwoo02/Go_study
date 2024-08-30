@@ -1,0 +1,7 @@
+// terminal 에 입력
+
+go doc fmt // fmt 패키지 문서
+go env // 환경설정
+go mod init [module-name] // 현재 디렉토리를 Go 모듈로 초기화하고, 모듈의 이름을 module-name로 설정, go.mod 파일이 생성
+go version // go 버전
+go tool cgo // Go 프로그램에서 C 코드를 호출할 수 있게 해주는 Go의 도구
