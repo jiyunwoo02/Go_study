@@ -105,7 +105,7 @@ func GetStudentListHandler(w http.ResponseWriter, r *http.Request) {
 
 // 2. 요청된 ID에 해당하는 학생 정보를 JSON 형식으로 반환
 func GetStudentHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)               // mux.Vars() 호출해 인수 가져온다
+	vars := mux.Vars(r)               // mux.Vars() 호출해 인수(id) 추출한다
 	id, _ := strconv.Atoi(vars["id"]) // URL에서 id 파라미터를 정수로 변환
 	student, ok := students[id]
 
@@ -119,7 +119,7 @@ func GetStudentHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(student)                 // 학생 데이터를 JSON 형식으로 인코딩 후 응답
 }
 
-// 3. 새로운 학생 데이터를 받아서 시스템에 추가
+// 3. 새로운 학생 데이터를 받아서 시스템에 추가 & 추가한 학생 정보 볼 수 있도록 수정 (09/02)
 func PostStudentHandler(w http.ResponseWriter, r *http.Request) {
 	var student Student // 새로운 학생 정보를 저장할 Student 타입 변수 선언
 
@@ -130,15 +130,16 @@ func PostStudentHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest) // JSON 디코딩 실패 시, HTTP 400 (Bad Request) 상태 코드 반환
 		return
 	}
-	lastId++            // 글로벌 lastId 변수를 증가시켜 새로운 학생에게 유니크한 ID 할당
-	student.Id = lastId // 새로운 ID를 학생의 Id 필드에 설정
-
+	lastId++                   // 글로벌 lastId 변수를 증가시켜 새로운 학생에게 유니크한 ID 할당
+	student.Id = lastId        // 새로운 ID를 학생의 Id 필드에 설정
 	students[lastId] = student // students 맵에 새 학생 정보를 추가
 
 	w.WriteHeader(http.StatusCreated) // 데이터 추가 성공 시, HTTP 201 (Created) 상태 코드 반환
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(student) // 코드 수정! 추가된 학생 정보를 JSON 형식으로 반환
 }
 
-// 4. 주어진 ID에 해당하는 학생 데이터를 제거
+// 4. 주어진 ID에 해당하는 학생 데이터를 제거 & 성공적으로 제거 여부 표시 (09/02)
 func DeleteStudentHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)               // URL 파라미터에서 데이터 추출
 	id, _ := strconv.Atoi(vars["id"]) // URL 경로에 포함된 id 파라미터를 정수로 변환
@@ -150,6 +151,7 @@ func DeleteStudentHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound) // 해당 ID의 학생이 존재하지 않는 경우, HTTP 404 (Not Found) 반환
 		return
 	}
+
 	// 해당 ID의 학생 데이터가 존재하는 경우, 맵에서 해당 학생 정보 삭제
 	delete(students, id)
 	w.WriteHeader(http.StatusOK) // 성공적으로 학생 데이터를 삭제한 경우, HTTP 200 (OK) 반환
