@@ -2,9 +2,10 @@ package main
 
 import (
 	"encoding/json" // 데이터를 JSON 형식으로 인코딩/디코딩하기 위한 패키지
-	"net/http"      // HTTP 프로토콜을 이용한 서버/클라이언트 구현 위한 패키지
-	"sort"          // 데이터를 정렬하는 함수를 제공하는 패키지
-	"strconv"       // 문자열을 기본 데이터 타입으로 변환하는 기능 제공
+	"fmt"
+	"net/http" // HTTP 프로토콜을 이용한 서버/클라이언트 구현 위한 패키지
+	"sort"     // 데이터를 정렬하는 함수를 제공하는 패키지
+	"strconv"  // 문자열을 기본 데이터 타입으로 변환하는 기능 제공
 
 	"github.com/gorilla/mux" // 강력한 URL 라우팅 기능을 제공하는 외부 패키지, 요청 URL과 관련된 핸들러를 매핑하는 데 사용
 	// URL 라우팅: 클라이언트가 요청한 url 과 요청 방식(get/post/delete/put 등)에 따른 서버의 처리 방식을 지정하여 웹 어플리케이션의 이정표 역할을 수정
@@ -23,7 +24,14 @@ type Student struct { // 학생의 정보를 나타내는 구조체
 }
 
 // 전역 변수 students : 학생의 ID를 키로 하여 Student 객체를 저장
+// 학생 데이터는 Go의 내장 데이터 구조인 map을 사용하여 메모리 내에 저장되고 있다!
 var students map[int]Student
+
+/*
+데이터 추가: PostStudentHandler 함수에서 새로운 학생 데이터가 입력되면, 이 데이터는 JSON 형식으로 전달되고, Go의 json 패키지를 사용하여 Student 구조체로 디코딩된다. 디코딩된 데이터는 students 맵에 저장된다.
+데이터 조회: GetStudentListHandler와 GetStudentHandler 함수는 students 맵에서 정보를 조회하여 필요에 따라 반환한다.
+데이터 삭제: DeleteStudentHandler 함수는 주어진 ID를 키로 사용하여 students 맵에서 해당 학생 데이터를 찾아 삭제한다.
+*/
 
 // 맵에 객체를 추가할 때 키 값으로 사용하는 것은 구조체의 어떤 필드든 될 수 있지만,
 // 여기서는 고유 식별자의 역할을 하는 Id 필드가 자연스럽게 키로 사용된다!
@@ -130,7 +138,7 @@ func PostStudentHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest) // JSON 디코딩 실패 시, HTTP 400 (Bad Request) 상태 코드 반환
 		return
 	}
-	lastId++                   // 글로벌 lastId 변수를 증가시켜 새로운 학생에게 유니크한 ID 할당
+	lastId++                   // lastId 전역 변수를 증가시켜 새로운 학생에게 유니크 ID 할당: 클라이언트가 제공한 ID를 무시하고 서버 측에서 ID를 관리
 	student.Id = lastId        // 새로운 ID를 학생의 Id 필드에 설정
 	students[lastId] = student // students 맵에 새 학생 정보를 추가
 
@@ -155,6 +163,15 @@ func DeleteStudentHandler(w http.ResponseWriter, r *http.Request) {
 	// 해당 ID의 학생 데이터가 존재하는 경우, 맵에서 해당 학생 정보 삭제
 	delete(students, id)
 	w.WriteHeader(http.StatusOK) // 성공적으로 학생 데이터를 삭제한 경우, HTTP 200 (OK) 반환
+}
+
+// students 맵에 저장된 모든 학생의 정보를 출력 -> 테스트 코드에 출력하려고! (09/02)
+func PrintStudents() {
+	fmt.Println("Current students in map:")
+	for id, student := range students {
+		fmt.Printf("ID: %d, Name: %s, Age: %d, Score: %d\n", id, student.Name, student.Age, student.Score)
+	}
+	fmt.Println("") // 줄바꿈 추가
 }
 
 func main() {
