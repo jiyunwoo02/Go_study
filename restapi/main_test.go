@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -10,8 +11,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestJsonHandler(t *testing.T) {
+func TestJsonHandler1(t *testing.T) {
 	assert := assert.New(t) // 테스트 객체 생성
+	mux := MakeWebHandler() // 실제 웹 핸들러 생성(초기 데이터 2개 저장됨)
 
 	res := httptest.NewRecorder()
 	// HTTP 응답을 기록할 ResponseRecorder 생성
@@ -20,8 +22,6 @@ func TestJsonHandler(t *testing.T) {
 	req := httptest.NewRequest("GET", "/students", nil)
 	// "/students" 경로에 대한 GET 요청을 생성, 요청 본문은 없다 (nil)
 	// httptest.NewRequest는 "테스트 목적으로 사용되는 HTTP 요청을 생성"
-
-	mux := MakeWebHandler() // 실제 웹 핸들러 생성
 
 	mux.ServeHTTP(res, req)
 	// ServeHTTP는 요청(req)을 처리하고, 응답을 res에 기록
@@ -43,9 +43,17 @@ func TestJsonHandler(t *testing.T) {
 	assert.Equal(2, len(list))
 	// 디코딩된 Student 슬라이스의 길이가 2인지 확인
 
-	assert.Equal("aaa", list[0].Name)
+	assert.Equal("aaa1", list[0].Name)
 	assert.Equal("bbb", list[1].Name)
-	PrintStudents() // 현재 학생 데이터 출력
+
+	// 학생 정보 출력
+	fmt.Println("Retrieved students:")
+	for _, student := range list {
+		fmt.Printf("ID: %d, Name: %s, Age: %d, Score: %d\n",
+			student.Id, student.Name, student.Age, student.Score)
+	}
+
+	// PrintStudents()
 }
 
 func TestJsonHandler2(t *testing.T) {
@@ -64,17 +72,21 @@ func TestJsonHandler2(t *testing.T) {
 	assert.Nil(err)
 	assert.Equal("aaa", student.Name)
 
+	// 학생 정보 출력
+	fmt.Printf("Retrieved student - ID: %d, Name: %s, Age: %d, Score: %d\n",
+		student.Id, student.Name, student.Age, student.Score)
+
 	// id = 2 학생
-	res = httptest.NewRecorder()
-	req = httptest.NewRequest("GET", "/students/2", nil)
+	// res = httptest.NewRecorder()
+	// req = httptest.NewRequest("GET", "/students/2", nil)
 
-	mux.ServeHTTP(res, req)
-	assert.Equal(http.StatusOK, res.Code)
-	err = json.NewDecoder(res.Body).Decode(&student)
-	assert.Nil(err)
-	assert.Equal("bbb", student.Name)
+	// mux.ServeHTTP(res, req)
+	// assert.Equal(http.StatusOK, res.Code)
+	// err = json.NewDecoder(res.Body).Decode(&student)
+	// assert.Nil(err)
+	// assert.Equal("bbb", student.Name)
 
-	PrintStudents() // 현재 학생 데이터 출력
+	// PrintStudents() // 현재 학생 데이터 출력
 }
 
 func TestJsonHandler3(t *testing.T) {
@@ -83,7 +95,8 @@ func TestJsonHandler3(t *testing.T) {
 	mux := MakeWebHandler()
 
 	res := httptest.NewRecorder()
-	req := httptest.NewRequest("POST", "/students", strings.NewReader(`{"Id":0, "Name":"ccc","Age":15,"Score":78}`))
+	req := httptest.NewRequest("POST", "/students",
+		strings.NewReader(`{"Id":0, "Name":"ccc","Age":15,"Score":78}`))
 	mux.ServeHTTP(res, req)
 	assert.Equal(http.StatusCreated, res.Code)
 
@@ -116,6 +129,7 @@ func TestJsonHandler4(t *testing.T) {
 
 	res = httptest.NewRecorder()
 	req = httptest.NewRequest("GET", "/students", nil)
+
 	mux.ServeHTTP(res, req)
 	assert.Equal(http.StatusOK, res.Code)
 

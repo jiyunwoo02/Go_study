@@ -24,3 +24,6 @@ func TestSquare2(t *testing.T) {
 	// 두 테스트 다 테스트 성공하면 두 테스트 한 번에 실행해도 하나의 pass ok 뜬다
 	// 테스트 하나씩 실행하려면 go test -run Square1
 }
+
+// go run ex18_test.go 하면 오류 난다
+// go: cannot run *_test.go files (ex18_test.go)
