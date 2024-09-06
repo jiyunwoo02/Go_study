@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Go로 ToDo list 만들기</title>
+</head>
+<body>
+    <h1>{{.PageTitle}}</h1>
+    <ul>
+        {{range .Todos}}
+        <li>{{if .Done}}<s>{{.Title}}</s>{{else}}{{.Title}}{{end}}</li>
+        {{end}}
+    </ul>
+    <form action="/add" method="post">
+        <input type="text" name="title">
+        <input type="submit" value="Add">
+    </form>
+</body>
+</html>
